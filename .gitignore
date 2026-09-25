@@ -1,0 +1,9 @@
+# User data and profile caches
+.app_profile/
+__pycache__/
+*.pyc
+
+# Local system files
+Thumbs.db
+.DS_Store
+*.log

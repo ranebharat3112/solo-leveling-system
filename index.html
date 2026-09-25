@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solo Leveling System - Real Life Hunter OS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+    :root {
+      --sys-blue: #00f0ff;
+      --sys-blue-glow: rgba(0, 240, 255, 0.45);
+      --sys-dark: #070b13;
+      --sys-panel: rgba(10, 18, 32, 0.92);
+      --sys-purple: #9d4edd;
+      --sys-purple-glow: rgba(157, 78, 221, 0.6);
+      --sys-red: #ff3366;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: radial-gradient(circle at 50% 15%, #0e172e 0%, #050811 75%, #020408 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .font-hud {
+      font-family: 'Orbitron', monospace;
+    }
+
+    .system-border {
+      border: 1px solid var(--sys-blue);
+      box-shadow: 0 0 15px var(--sys-blue-glow), inset 0 0 15px rgba(0, 240, 255, 0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .monarch-border {
+      border: 1px solid var(--sys-purple);
+      box-shadow: 0 0 20px var(--sys-purple-glow), inset 0 0 20px rgba(157, 78, 221, 0.18);
+    }
+
+    .penalty-border {
+      border: 1px solid var(--sys-red);
+      box-shadow: 0 0 25px rgba(255, 51, 102, 0.7), inset 0 0 20px rgba(255, 51, 102, 0.3);
+      animation: pulse-danger 1.5s infinite;
+    }
+
+    @keyframes pulse-danger {
+      0%, 100% { box-shadow: 0 0 15px rgba(255, 51, 102, 0.5); }
+      50% { box-shadow: 0 0 35px rgba(255, 51, 102, 0.9); }
+    }
+
+    .scanline {
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0, 240, 255, 0.035) 50%,
+        rgba(0, 240, 255, 0.035)
+      );
+      background-size: 100% 4px;
+    }
+
+    .glow-text-cyan {
+      color: #00f0ff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.75);
+    }
+
+    .glow-text-purple {
+      color: #c77dff;
+      text-shadow: 0 0 12px rgba(157, 78, 221, 0.9);
+    }
+
+    .glow-text-gold {
+      color: #fbbf24;
+      text-shadow: 0 0 12px rgba(251, 191, 36, 0.75);
+    }
+
+    .stat-btn {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .stat-btn:hover:not(:disabled) {
+      background: #00f0ff;
+      color: #000;
+      box-shadow: 0 0 15px #00f0ff;
+    }
+
+    .arise-btn {
+      background: linear-gradient(135deg, #3c096c 0%, #7b2cbf 50%, #9d4edd 100%);
+      transition: all 0.25s ease;
+      box-shadow: 0 0 20px rgba(157, 78, 221, 0.6);
+    }
+    .arise-btn:hover {
+      box-shadow: 0 0 35px rgba(157, 78, 221, 0.95);
+      transform: scale(1.02);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(5, 10, 20, 0.8);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #00f0ff;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 scanline flex flex-col items-center justify-start min-h-screen">
+
+  <!-- TOP HEADER HUD -->
+  <header class="w-full max-w-5xl flex flex-wrap items-center justify-between gap-4 mb-5 p-4 rounded-xl system-border bg-[var(--sys-panel)]">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-cyan-950 border border-cyan-400 shadow-[0_0_12px_#00f0ff]">
+        <span class="text-xl font-hud font-bold text-cyan-400">⚡</span>
+      </div>
+      <div>
+        <h1 class="text-xl md:text-2xl font-hud font-extrabold tracking-wider glow-text-cyan flex items-center gap-2">
+          THE SYSTEM <span class="text-xs px-2 py-0.5 rounded bg-cyan-900/60 border border-cyan-500 font-mono tracking-normal">REAL LIFE OS v5.0</span>
+        </h1>
+        <p class="text-xs text-slate-400 tracking-widest uppercase">Mortal Vessel Synchronization Active</p>
+      </div>
+    </div>
+
+    <!-- AUDIO & HUNTER RANK -->
+    <div class="flex items-center gap-4">
+      <div class="text-right">
+        <span class="text-[11px] text-slate-400 block font-mono">HUNTER EVALUATION</span>
+        <span id="hunter-rank-badge" class="font-hud font-bold text-lg text-amber-400 tracking-wider">RANK E</span>
+      </div>
+      <button id="sound-toggle-btn" onclick="toggleAudio()" class="px-3 py-1.5 rounded-lg border border-cyan-500/50 bg-cyan-950/40 text-cyan-300 text-xs font-hud hover:bg-cyan-900/50 transition flex items-center gap-1.5">
+        <span id="audio-icon">🔊</span> AUDIO: ON
+      </button>
+      <button onclick="requestWindowsNotification()" class="px-2.5 py-1.5 rounded-lg border border-purple-500/50 bg-purple-950/40 text-purple-300 text-xs font-hud hover:bg-purple-900/50 transition" title="Enable Windows System Notifications">
+        🔔 NOTIFS
+      </button>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="w-full max-w-5xl flex gap-2 mb-6 overflow-x-auto pb-2">
+    <button onclick="switchTab('real-life')" id="tab-real-life" class="tab-btn px-5 py-2.5 rounded-lg font-hud text-sm font-semibold tracking-wider transition bg-cyan-500/20 text-cyan-300 border border-cyan-400 shadow-[0_0_10px_rgba(0,240,255,0.4)]">
+      🔥 REAL LIFE MISSIONS <span id="rl-notif-badge" class="px-1.5 py-0.2 rounded-full bg-cyan-500 text-black text-[10px] font-bold ml-1">0</span>
+    </button>
+    <button onclick="switchTab('status')" id="tab-status" class="tab-btn px-5 py-2.5 rounded-lg font-hud text-sm font-semibold tracking-wider transition bg-slate-900/60 text-slate-400 border border-slate-700 hover:text-cyan-300">
+      STATUS WINDOW
+    </button>
+    <button onclick="switchTab('quest')" id="tab-quest" class="tab-btn px-5 py-2.5 rounded-lg font-hud text-sm font-semibold tracking-wider transition bg-slate-900/60 text-slate-400 border border-slate-700 hover:text-cyan-300">
+      CANON DAILY QUEST
+    </button>
+    <button onclick="switchTab('shadows')" id="tab-shadows" class="tab-btn px-5 py-2.5 rounded-lg font-hud text-sm font-semibold tracking-wider transition bg-slate-900/60 text-slate-400 border border-slate-700 hover:text-purple-400">
+      SHADOW ARMY ("ARISE")
+    </button>
+    <button onclick="switchTab('dungeons')" id="tab-dungeons" class="tab-btn px-5 py-2.5 rounded-lg font-hud text-sm font-semibold tracking-wider transition bg-slate-900/60 text-slate-400 border border-slate-700 hover:text-cyan-300">
+      DUNGEON GATES
+    </button>
+    <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-5 py-2.5 rounded-lg font-hud text-sm font-semibold tracking-wider transition bg-slate-900/60 text-slate-400 border border-slate-700 hover:text-cyan-300">
+      STORAGE & SHOP
+    </button>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="w-full max-w-5xl">
+
+    <!-- =========================================================================
+         TAB 1: REAL-LIFE MISSIONS (THE CORE USER REQUEST)
+         ========================================================================= -->
+    <div id="view-real-life" class="space-y-6">
+      
+      <!-- REAL-LIFE CONTROL BAR & STATS SUMMARY -->
+      <div class="p-6 rounded-2xl system-border bg-[var(--sys-panel)]">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-cyan-900/60">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-hud bg-cyan-600 text-black font-bold tracking-widest">ACTIVE REALITY</span>
+              <h2 class="text-2xl font-hud font-black text-white tracking-wide">REAL LIFE QUEST BOARD</h2>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">
+              Complete physical, intellectual, and discipline quests in real life to level up your actual human vessel.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button onclick="openAddMissionModal()" class="px-5 py-2.5 rounded-xl font-hud font-bold text-xs bg-cyan-500 text-black shadow-[0_0_18px_#00f0ff] hover:bg-cyan-400 transition flex items-center gap-2">
+              <span class="text-base">+</span> ADD REAL-LIFE MISSION
+            </button>
+          </div>
+        </div>
+
+        <!-- QUICK PRESET TEMPLATES -->
+        <div class="mt-4">
+          <span class="text-[11px] font-hud text-slate-400 tracking-wider block mb-2 font-mono">QUICK PRESET MISSIONS (ONE-CLICK ADD):</span>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="addPresetMission('water')" class="px-3 py-1.5 rounded-lg bg-emerald-950/60 border border-emerald-700 text-emerald-300 text-xs font-semibold hover:bg-emerald-900/70 transition">
+              💧 Drink 3L Water (+2 VIT)
+            </button>
+            <button onclick="addPresetMission('coding')" class="px-3 py-1.5 rounded-lg bg-purple-950/60 border border-purple-700 text-purple-300 text-xs font-semibold hover:bg-purple-900/70 transition">
+              💻 2 Hours Focused Coding (+3 INT)
+            </button>
+            <button onclick="addPresetMission('reading')" class="px-3 py-1.5 rounded-lg bg-cyan-950/60 border border-cyan-700 text-cyan-300 text-xs font-semibold hover:bg-cyan-900/70 transition">
+              📚 Read 20 Book Pages (+2 INT, +1 SEN)
+            </button>
+            <button onclick="addPresetMission('workout')" class="px-3 py-1.5 rounded-lg bg-rose-950/60 border border-rose-700 text-rose-300 text-xs font-semibold hover:bg-rose-900/70 transition">
+              🏋️ 45m Gym / Workout (+3 STR, +1 VIT)
+            </button>
+            <button onclick="addPresetMission('meditate')" class="px-3 py-1.5 rounded-lg bg-amber-950/60 border border-amber-700 text-amber-300 text-xs font-semibold hover:bg-amber-900/70 transition">
+              🧘 15m Mindfulness/Meditation (+2 SEN)
+            </button>
+            <button onclick="addPresetMission('cardio')" class="px-3 py-1.5 rounded-lg bg-blue-950/60 border border-blue-700 text-blue-300 text-xs font-semibold hover:bg-blue-900/70 transition">
+              🏃 5km Jogging / Cardio (+3 AGI)
+            </button>
+          </div>
+        </div>
+
+        <!-- FILTER CHIPS -->
+        <div class="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800 text-xs overflow-x-auto">
+          <span class="text-slate-400 font-mono text-[11px]">FILTER:</span>
+          <button onclick="filterMissions('all')" id="filter-all" class="px-3 py-1 rounded-md bg-cyan-950 border border-cyan-500 text-cyan-300">ALL</button>
+          <button onclick="filterMissions('strength')" id="filter-strength" class="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-400 hover:text-white">STRENGTH (STR)</button>
+          <button onclick="filterMissions('intellect')" id="filter-intellect" class="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-400 hover:text-white">INTELLECT (INT)</button>
+          <button onclick="filterMissions('vitality')" id="filter-vitality" class="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-400 hover:text-white">HEALTH (VIT)</button>
+          <button onclick="filterMissions('agility')" id="filter-agility" class="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-400 hover:text-white">AGILITY (AGI)</button>
+          <button onclick="filterMissions('sense')" id="filter-sense" class="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-400 hover:text-white">FOCUS (SEN)</button>
+        </div>
+      </div>
+
+      <!-- REAL LIFE MISSIONS CONTAINER -->
+      <div id="real-life-missions-list" class="space-y-4">
+        <!-- Dynamically rendered mission cards -->
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div id="no-missions-state" class="hidden p-10 rounded-2xl border border-dashed border-cyan-800/60 bg-[var(--sys-panel)] text-center">
+        <span class="text-4xl block mb-2">📋</span>
+        <h3 class="font-hud font-bold text-lg text-white">NO ACTIVE MISSIONS IN THIS CATEGORY</h3>
+        <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+          Create a mission above or click one of the preset buttons to begin forging your real-life stats!
+        </p>
+      </div>
+
+    </div>
+
+    <!-- =========================================================================
+         TAB 2: STATUS WINDOW
+         ========================================================================= -->
+    <div id="view-status" class="hidden space-y-6">
+      
+      <!-- PLAYER IDENTITY CARD -->
+      <div class="p-6 rounded-2xl system-border bg-[var(--sys-panel)] relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+          <div class="md:col-span-2">
+            <span class="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-1">Hunter Vessel Identity</span>
+            <h2 class="text-3xl font-hud font-black tracking-wide text-white flex items-center gap-3">
+              <span id="player-name">SUNG JIN-WOO</span>
+              <button onclick="renamePlayer()" class="text-xs text-slate-500 hover:text-cyan-400">✎</button>
+            </h2>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span id="job-title" class="px-2.5 py-1 text-xs font-hud font-bold rounded bg-purple-950/80 border border-purple-500 text-purple-300 glow-text-purple">
+                JOB: NONE
+              </span>
+              <span id="player-title" class="px-2.5 py-1 text-xs font-hud rounded bg-cyan-950/80 border border-cyan-500 text-cyan-300">
+                TITLE: ONE WHO OVERCAME ADVERSITY
+              </span>
+            </div>
+          </div>
+
+          <!-- LEVEL & EXP BADGE -->
+          <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/60">
+            <span class="text-xs font-hud text-slate-400">HUNTER LEVEL</span>
+            <span id="display-level" class="text-4xl font-hud font-black glow-text-cyan">1</span>
+            <span id="display-exp-text" class="text-[11px] font-mono text-slate-400 mt-1">0 / 125 EXP</span>
+          </div>
+
+          <!-- GOLD & COINS -->
+          <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-amber-950/20 border border-amber-800/50">
+            <span class="text-xs font-hud text-amber-400">SYSTEM GOLD</span>
+            <span id="display-gold" class="text-3xl font-hud font-extrabold text-amber-300">0 G</span>
+            <span class="text-[10px] text-slate-500 mt-1">Earned from Missions & Gs</span>
+          </div>
+        </div>
+
+        <!-- HP, MP, FATIGUE GAUGES -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-cyan-900/60">
+          <div>
+            <div class="flex justify-between text-xs font-hud font-semibold mb-1">
+              <span class="text-emerald-400">HP (PHYSICAL INTEGRITY)</span>
+              <span id="hp-text" class="text-slate-300">300 / 300</span>
+            </div>
+            <div class="w-full h-3 rounded-full bg-slate-900 overflow-hidden border border-emerald-900">
+              <div id="hp-bar" class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_8px_#10b981] transition-all duration-300" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-hud font-semibold mb-1">
+              <span class="text-cyan-400">MP (MANA CAPACITY)</span>
+              <span id="mp-text" class="text-slate-300">340 / 340</span>
+            </div>
+            <div class="w-full h-3 rounded-full bg-slate-900 overflow-hidden border border-cyan-900">
+              <div id="mp-bar" class="h-full bg-gradient-to-r from-blue-600 to-cyan-400 shadow-[0_0_8px_#00f0ff] transition-all duration-300" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-hud font-semibold mb-1">
+              <span class="text-rose-400">FATIGUE ACCUMULATION</span>
+              <span id="fatigue-text" class="text-slate-300">0%</span>
+            </div>
+            <div class="w-full h-3 rounded-full bg-slate-900 overflow-hidden border border-rose-900">
+              <div id="fatigue-bar" class="h-full bg-gradient-to-r from-rose-600 to-rose-400 shadow-[0_0_8px_#f43f5e] transition-all duration-300" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATTRIBUTES GRID & UNASSIGNED POINTS -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- ATTRIBUTES LIST -->
+        <div class="lg:col-span-2 p-6 rounded-2xl system-border bg-[var(--sys-panel)]">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-cyan-900/60">
+            <h3 class="text-lg font-hud font-bold text-white tracking-wider">CORE ATTRIBUTES</h3>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400">UNASSIGNED POINTS:</span>
+              <span id="unassigned-points" class="font-hud font-black text-xl text-amber-400 glow-text-cyan px-2.5 py-0.5 rounded bg-amber-950/40 border border-amber-500">0</span>
+            </div>
+          </div>
+
+          <div class="space-y-3.5">
+            <!-- STR -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+              <div class="flex items-center gap-3">
+                <span class="w-12 text-center py-1 rounded bg-rose-950/60 border border-rose-600 font-hud text-xs font-bold text-rose-300">STR</span>
+                <div>
+                  <span class="font-semibold text-white block text-sm">STRENGTH</span>
+                  <span class="text-[11px] text-slate-400">Gym, push-ups, physical explosive power</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span id="val-str" class="font-hud font-black text-2xl text-cyan-300 w-12 text-right">10</span>
+                <button onclick="allocateStat('str')" class="stat-btn w-8 h-8 rounded-lg border border-cyan-500 bg-cyan-950/70 text-cyan-400 font-bold text-lg flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- AGI -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+              <div class="flex items-center gap-3">
+                <span class="w-12 text-center py-1 rounded bg-amber-950/60 border border-amber-600 font-hud text-xs font-bold text-amber-300">AGI</span>
+                <div>
+                  <span class="font-semibold text-white block text-sm">AGILITY</span>
+                  <span class="text-[11px] text-slate-400">Speed, reaction time, cardio endurance</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span id="val-agi" class="font-hud font-black text-2xl text-cyan-300 w-12 text-right">10</span>
+                <button onclick="allocateStat('agi')" class="stat-btn w-8 h-8 rounded-lg border border-cyan-500 bg-cyan-950/70 text-cyan-400 font-bold text-lg flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- VIT -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+              <div class="flex items-center gap-3">
+                <span class="w-12 text-center py-1 rounded bg-emerald-950/60 border border-emerald-600 font-hud text-xs font-bold text-emerald-300">VIT</span>
+                <div>
+                  <span class="font-semibold text-white block text-sm">VITALITY</span>
+                  <span class="text-[11px] text-slate-400">Health, hydration, immunity, recovery</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span id="val-vit" class="font-hud font-black text-2xl text-cyan-300 w-12 text-right">10</span>
+                <button onclick="allocateStat('vit')" class="stat-btn w-8 h-8 rounded-lg border border-cyan-500 bg-cyan-950/70 text-cyan-400 font-bold text-lg flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- INT -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/70 border border-purple-900/50">
+              <div class="flex items-center gap-3">
+                <span class="w-12 text-center py-1 rounded bg-purple-950/60 border border-purple-600 font-hud text-xs font-bold text-purple-300">INT</span>
+                <div>
+                  <span class="font-semibold text-white block text-sm">INTELLIGENCE</span>
+                  <span class="text-[11px] text-purple-300">Coding, studying, shadow army capacity</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span id="val-int" class="font-hud font-black text-2xl text-purple-300 w-12 text-right">10</span>
+                <button onclick="allocateStat('int')" class="stat-btn w-8 h-8 rounded-lg border border-purple-500 bg-purple-950/70 text-purple-400 font-bold text-lg flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- SEN -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/70 border border-slate-800">
+              <div class="flex items-center gap-3">
+                <span class="w-12 text-center py-1 rounded bg-cyan-950/60 border border-cyan-600 font-hud text-xs font-bold text-cyan-300">SEN</span>
+                <div>
+                  <span class="font-semibold text-white block text-sm">SENSE</span>
+                  <span class="text-[11px] text-slate-400">Deep focus, meditation, danger perception</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span id="val-sen" class="font-hud font-black text-2xl text-cyan-300 w-12 text-right">10</span>
+                <button onclick="allocateStat('sen')" class="stat-btn w-8 h-8 rounded-lg border border-cyan-500 bg-cyan-950/70 text-cyan-400 font-bold text-lg flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none">
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-4 pt-3 border-t border-slate-800 text-xs">
+            <button onclick="giveDebugStatPoints(5)" class="px-3 py-1.5 rounded bg-cyan-950 border border-cyan-600 text-cyan-300 hover:bg-cyan-900">+5 Test Points</button>
+            <button onclick="resetStats()" class="px-3 py-1.5 rounded bg-slate-800 text-slate-400 hover:text-white">Reset Allocations</button>
+          </div>
+        </div>
+
+        <!-- DERIVED COMBAT RATINGS -->
+        <div class="p-6 rounded-2xl system-border bg-[var(--sys-panel)] flex flex-col justify-between">
+          <div>
+            <h3 class="text-lg font-hud font-bold text-white tracking-wider mb-4 pb-3 border-b border-cyan-900/60">
+              DERIVED COMBAT POWER
+            </h3>
+            
+            <div class="space-y-4">
+              <div>
+                <span class="text-xs text-slate-400 block font-mono">PHYSICAL ATTACK POWER</span>
+                <span id="derived-atk" class="text-2xl font-hud font-bold text-white">43</span>
+                <div class="text-[11px] text-slate-500">Based on STR (x3.2) + AGI (x1.1)</div>
+              </div>
+
+              <div>
+                <span class="text-xs text-slate-400 block font-mono">DANGER PERCEPTION RADIUS</span>
+                <span id="derived-perception" class="text-2xl font-hud font-bold text-cyan-300">25 m</span>
+                <div class="text-[11px] text-slate-500">Based on SEN (x1.5) + Base</div>
+              </div>
+
+              <div>
+                <span class="text-xs text-purple-400 block font-mono">MAX SHADOW CAPACITY</span>
+                <span id="derived-shadow-cap" class="text-2xl font-hud font-bold text-purple-300">15 Soldiers</span>
+                <div class="text-[11px] text-slate-500">Based on INT (x1.5)</div>
+              </div>
+
+              <div>
+                <span class="text-xs text-amber-400 block font-mono">REAL LIFE MISSIONS CLEARED</span>
+                <span id="derived-cleared-count" class="text-2xl font-hud font-bold text-amber-300">0 Quests</span>
+                <div class="text-[11px] text-slate-500">Total life achievements logged</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 p-3 rounded-xl bg-purple-950/30 border border-purple-800/50">
+            <span class="text-xs font-hud font-bold text-purple-300 flex items-center gap-1.5">
+              <span>👑</span> MONARCH'S WILL
+            </span>
+            <p class="text-[11px] text-slate-300 mt-1 leading-relaxed">
+              Every real life action trains the vessel. Real-world consistency converts directly into sovereign strength.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         TAB 3: CANON DAILY QUEST
+         ========================================================================= -->
+    <div id="view-quest" class="hidden space-y-6">
+      
+      <div id="quest-container" class="p-6 md:p-8 rounded-2xl system-border bg-[var(--sys-panel)] relative">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-cyan-900/60">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-hud bg-red-600 text-white font-bold tracking-widest">MANDATORY</span>
+              <h2 class="text-2xl font-hud font-extrabold text-white tracking-wide">[DAILY QUEST]</h2>
+            </div>
+            <p class="text-sm text-cyan-300 font-semibold tracking-wider mt-1">PREPARATIONS TO BECOME STRONG</p>
+          </div>
+
+          <div class="text-right">
+            <span class="text-xs text-slate-400 font-mono block">TIME REMAINING TODAY</span>
+            <span id="quest-timer" class="text-2xl font-hud font-bold text-rose-400">14:28:19</span>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <!-- PUSHUPS -->
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+            <div class="flex justify-between items-center mb-2">
+              <div class="font-hud font-semibold text-white flex items-center gap-2">
+                <span>💪</span> PUSH-UPS
+              </div>
+              <div class="font-hud font-bold text-cyan-300">
+                <span id="q-pushups">0</span> / 100
+              </div>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden mb-3">
+              <div id="bar-pushups" class="h-full bg-cyan-400 shadow-[0_0_8px_#00f0ff] transition-all" style="width: 0%;"></div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="addQuestProgress('pushups', 10)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">+10</button>
+              <button onclick="addQuestProgress('pushups', 25)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">+25</button>
+              <button onclick="addQuestProgress('pushups', 100)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">MAX (100)</button>
+            </div>
+          </div>
+
+          <!-- SITUPS -->
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+            <div class="flex justify-between items-center mb-2">
+              <div class="font-hud font-semibold text-white flex items-center gap-2">
+                <span>🥋</span> SIT-UPS
+              </div>
+              <div class="font-hud font-bold text-cyan-300">
+                <span id="q-situps">0</span> / 100
+              </div>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden mb-3">
+              <div id="bar-situps" class="h-full bg-cyan-400 shadow-[0_0_8px_#00f0ff] transition-all" style="width: 0%;"></div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="addQuestProgress('situps', 10)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">+10</button>
+              <button onclick="addQuestProgress('situps', 25)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">+25</button>
+              <button onclick="addQuestProgress('situps', 100)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">MAX (100)</button>
+            </div>
+          </div>
+
+          <!-- SQUATS -->
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+            <div class="flex justify-between items-center mb-2">
+              <div class="font-hud font-semibold text-white flex items-center gap-2">
+                <span>🦵</span> SQUATS
+              </div>
+              <div class="font-hud font-bold text-cyan-300">
+                <span id="q-squats">0</span> / 100
+              </div>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden mb-3">
+              <div id="bar-squats" class="h-full bg-cyan-400 shadow-[0_0_8px_#00f0ff] transition-all" style="width: 0%;"></div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="addQuestProgress('squats', 10)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">+10</button>
+              <button onclick="addQuestProgress('squats', 25)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">+25</button>
+              <button onclick="addQuestProgress('squats', 100)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">MAX (100)</button>
+            </div>
+          </div>
+
+          <!-- 10KM RUN -->
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+            <div class="flex justify-between items-center mb-2">
+              <div class="font-hud font-semibold text-white flex items-center gap-2">
+                <span>🏃</span> 10KM RUNNING
+              </div>
+              <div class="font-hud font-bold text-cyan-300">
+                <span id="q-run">0.0</span> / 10.0 km
+              </div>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden mb-3">
+              <div id="bar-run" class="h-full bg-cyan-400 shadow-[0_0_8px_#00f0ff] transition-all" style="width: 0%;"></div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="addQuestProgress('run', 1.0)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">+1.0 km</button>
+              <button onclick="addQuestProgress('run', 5.0)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">+5.0 km</button>
+              <button onclick="addQuestProgress('run', 10.0)" class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud hover:bg-cyan-900">COMPLETE (10km)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span class="text-xs text-slate-400 font-mono block">COMPLETION REWARDS:</span>
+            <div class="text-xs text-cyan-300 font-semibold mt-0.5">
+              1. Full Status & Fatigue Recovery &nbsp;|&nbsp; 2. +3 Unassigned Stat Points &nbsp;|&nbsp; 3. Random Blessed/Cursed Loot Box
+            </div>
+          </div>
+          
+          <button id="claim-quest-btn" onclick="claimDailyQuest()" disabled class="px-6 py-2.5 rounded-xl font-hud font-bold text-sm bg-cyan-500 text-black shadow-[0_0_20px_#00f0ff] hover:bg-cyan-400 disabled:opacity-30 disabled:pointer-events-none transition">
+            CLAIM REWARDS
+          </button>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+          <span class="text-xs text-rose-400">Fail timer to face Giant Poison Centipedes in the Desert</span>
+          <button onclick="triggerPenaltyZone()" class="px-3 py-1.5 rounded bg-rose-950/60 border border-rose-600 text-rose-300 text-xs font-hud hover:bg-rose-900 transition">
+            ⚠️ SIMULATE PENALTY ZONE
+          </button>
+        </div>
+      </div>
+
+      <!-- PENALTY ZONE MODAL -->
+      <div id="penalty-zone-modal" class="hidden p-6 rounded-2xl penalty-border bg-slate-950 relative">
+        <div class="text-center py-4">
+          <span class="text-4xl">🚨</span>
+          <h3 class="text-2xl font-hud font-black text-rose-500 tracking-widest mt-2">[EMERGENCY: PENALTY QUEST ACTIVATED]</h3>
+          <p class="text-sm text-slate-300 mt-1 max-w-lg mx-auto">
+            You failed to complete the daily quest in time. You have been transported to the dimensional desert wasteland.
+          </p>
+          <div class="my-6 p-4 rounded-xl bg-rose-950/30 border border-rose-800 inline-block">
+            <span class="text-xs text-rose-300 font-mono block">SURVIVAL TIME REQUIRED</span>
+            <span id="penalty-timer" class="text-3xl font-hud font-extrabold text-white">03:59:59</span>
+          </div>
+          <div class="flex justify-center gap-3">
+            <button onclick="survivePenaltyZone()" class="px-6 py-2.5 rounded-lg bg-rose-600 text-white font-hud font-bold hover:bg-rose-500 shadow-[0_0_15px_#f43f5e]">
+              FIGHT OFF CENTIPEDES (SURVIVE)
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =========================================================================
+         TAB 4: SHADOW ARMY ("ARISE")
+         ========================================================================= -->
+    <div id="view-shadows" class="hidden space-y-6">
+      
+      <div class="p-6 md:p-8 rounded-2xl monarch-border bg-[var(--sys-panel)] relative">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-purple-900/60">
+          <div>
+            <span class="text-xs font-mono text-purple-400 tracking-widest uppercase">Monarch of Shadows Authority</span>
+            <h2 class="text-2xl font-hud font-black glow-text-purple tracking-wide">SHADOW EXTRACTION CHAMBER</h2>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-400 font-mono block">SHADOW CAPACITY</span>
+            <span id="shadow-count-header" class="text-xl font-hud font-bold text-purple-300">0 / 15</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div>
+            <label class="text-xs text-slate-400 block mb-2 font-mono">SELECT TARGET FOR EXTRACTION:</label>
+            <select id="target-corpse-select" onchange="updateCorpsePreview()" class="w-full p-3 rounded-xl bg-slate-900 border border-purple-800 text-purple-200 font-hud text-sm focus:outline-none focus:border-purple-500">
+              <option value="igris">Blood-Red Commander Igris (Boss)</option>
+              <option value="tank">Tank - Alpha Ice Bear (Knight)</option>
+              <option value="iron">Iron - Kim Chul (Elite Knight)</option>
+              <option value="tusk">Tusk - High Orc Shaman (Elite Knight)</option>
+              <option value="beru">Ant King Beru (Marshal)</option>
+              <option value="bellion">Bellion - Monarch's Legion (Grand Marshal)</option>
+            </select>
+
+            <div id="target-details-box" class="mt-4 p-4 rounded-xl bg-purple-950/20 border border-purple-900/50 text-xs space-y-1.5">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Target Rank:</span>
+                <span id="corpse-rank" class="font-hud font-bold text-amber-300">COMMANDER</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Mana Cost:</span>
+                <span id="corpse-mana" class="font-hud font-bold text-cyan-300">180 MP</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Calculated Success Chance:</span>
+                <span id="corpse-chance" class="font-hud font-bold text-purple-400">68%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Attempts Remaining:</span>
+                <span id="corpse-attempts" class="font-hud font-bold text-rose-400">3 / 3</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center justify-center p-6 rounded-2xl bg-black/40 border border-purple-900/40 text-center">
+            <span class="text-xs text-purple-400 font-mono tracking-widest block mb-3">COMMAND THE DEAD</span>
+            <button onclick="performExtraction()" class="arise-btn px-10 py-5 rounded-2xl font-hud font-black text-2xl text-white tracking-widest uppercase">
+              일어나라 (ARISE)
+            </button>
+            <p class="text-[11px] text-slate-400 mt-3 max-w-xs">
+              Infuses player mana into the target's spirit. Will either bind the shadow or return the soul to dust.
+            </p>
+          </div>
+        </div>
+
+        <div id="extraction-log" class="mt-6 p-3 rounded-lg bg-black/60 border border-purple-950 font-mono text-xs text-purple-300 min-h-[40px] flex items-center">
+          Awaiting command from the Shadow Monarch...
+        </div>
+      </div>
+
+      <!-- ACTIVE SHADOW ARMY ROSTER -->
+      <div class="p-6 rounded-2xl system-border bg-[var(--sys-panel)]">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-cyan-900/60">
+          <h3 class="text-lg font-hud font-bold text-white tracking-wider flex items-center gap-2">
+            <span>👥</span> EXTRACTED SHADOW ARMY
+          </h3>
+          <span class="text-xs text-slate-400">Infinitely regenerates while Player has MP</span>
+        </div>
+
+        <div id="shadow-army-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </div>
+
+    </div>
+
+    <!-- =========================================================================
+         TAB 5: DUNGEON GATES
+         ========================================================================= -->
+    <div id="view-dungeons" class="hidden space-y-6">
+      
+      <div class="p-6 md:p-8 rounded-2xl system-border bg-[var(--sys-panel)]">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-cyan-900/60">
+          <div>
+            <h2 class="text-2xl font-hud font-extrabold text-white tracking-wide">INSTANT DUNGEON GATES</h2>
+            <p class="text-xs text-slate-400 mt-1">Private dimensional hunting zones where time is isolated from reality.</p>
+          </div>
+          <span class="px-3 py-1 rounded bg-cyan-950 border border-cyan-600 text-xs font-hud text-cyan-300">KEYS DETECTED</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- E-RANK -->
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-emerald-900/60 hover:border-emerald-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-hud bg-emerald-950 border border-emerald-500 text-emerald-400">RANK E</span>
+                <span class="text-xs text-slate-400">Rec. Lv 1+</span>
+              </div>
+              <h4 class="font-hud font-bold text-lg text-white">Subway Goblin Nest</h4>
+              <p class="text-xs text-slate-400 mt-1">Pack of feral goblins and Razan wolves lurking in the abandoned train tunnels.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center">
+              <span class="text-[11px] text-emerald-400">+150 EXP &nbsp; +200 G</span>
+              <button onclick="enterDungeon('e')" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-hud text-xs font-bold hover:bg-emerald-500">
+                ENTER
+              </button>
+            </div>
+          </div>
+
+          <!-- B-RANK -->
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-blue-900/60 hover:border-blue-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-hud bg-blue-950 border border-blue-500 text-blue-400">RANK B (RED GATE)</span>
+                <span class="text-xs text-slate-400">Rec. Lv 25+</span>
+              </div>
+              <h4 class="font-hud font-bold text-lg text-white">Frozen Forest of Yetis</h4>
+              <p class="text-xs text-slate-400 mt-1">Blizzard wasteland ruled by Ice Elves and the terrifying Alpha Ice Bear.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center">
+              <span class="text-[11px] text-blue-400">+1,200 EXP &nbsp; +1,800 G</span>
+              <button onclick="enterDungeon('b')" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-hud text-xs font-bold hover:bg-blue-500">
+                ENTER
+              </button>
+            </div>
+          </div>
+
+          <!-- S-RANK -->
+          <div class="p-5 rounded-xl bg-slate-900/80 border border-purple-900/60 hover:border-purple-500 transition flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-hud bg-purple-950 border border-purple-500 text-purple-400">RANK S (SPECIAL)</span>
+                <span class="text-xs text-slate-400">Rec. Lv 60+</span>
+              </div>
+              <h4 class="font-hud font-bold text-lg text-white">Demon Castle: 100th Floor</h4>
+              <p class="text-xs text-slate-400 mt-1">Domain of Demon King Baran and guardian of the Elixir of Life ingredients.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center">
+              <span class="text-[11px] text-purple-400">+8,000 EXP &nbsp; +25,000 G</span>
+              <button onclick="enterDungeon('s')" class="px-3 py-1.5 rounded-lg bg-purple-600 text-white font-hud text-xs font-bold hover:bg-purple-500">
+                ENTER
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <h4 class="text-xs font-hud font-bold text-slate-400 mb-2">BATTLE COMBAT TELEMETRY:</h4>
+          <div id="battle-log" class="p-4 rounded-xl bg-black/80 border border-cyan-950 font-mono text-xs text-cyan-300 h-44 overflow-y-auto space-y-1">
+            <p class="text-slate-500">> System ready. Select a Gate to initiate instant dungeon combat simulation.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =========================================================================
+         TAB 6: INVENTORY & SHOP
+         ========================================================================= -->
+    <div id="view-inventory" class="hidden space-y-6">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="p-6 rounded-2xl system-border bg-[var(--sys-panel)]">
+          <div class="flex justify-between items-center mb-4 pb-3 border-b border-cyan-900/60">
+            <h3 class="text-lg font-hud font-bold text-white tracking-wider">DIMENSIONAL STORAGE</h3>
+            <span class="text-xs text-slate-400">Weight Limit: Infinite</span>
+          </div>
+          <div id="inventory-grid" class="grid grid-cols-2 gap-3"></div>
+        </div>
+
+        <div class="p-6 rounded-2xl system-border bg-[var(--sys-panel)]">
+          <div class="flex justify-between items-center mb-4 pb-3 border-b border-cyan-900/60">
+            <h3 class="text-lg font-hud font-bold text-white tracking-wider">SYSTEM STORE</h3>
+            <span class="text-xs text-amber-400 font-mono">PURCHASE WITH GOLD</span>
+          </div>
+
+          <div class="space-y-3">
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center">
+              <div>
+                <span class="font-hud font-bold text-sm text-cyan-300">High Healing Potion</span>
+                <span class="text-xs text-slate-400 block">Restores 250 HP immediately</span>
+              </div>
+              <button onclick="buyItem('potion_hp', 150)" class="px-3 py-1.5 rounded-lg bg-amber-600 text-white font-hud text-xs font-bold hover:bg-amber-500">
+                150 G
+              </button>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center">
+              <div>
+                <span class="font-hud font-bold text-sm text-purple-300">Mana Elixir</span>
+                <span class="text-xs text-slate-400 block">Restores 300 MP immediately</span>
+              </div>
+              <button onclick="buyItem('potion_mp', 200)" class="px-3 py-1.5 rounded-lg bg-amber-600 text-white font-hud text-xs font-bold hover:bg-amber-500">
+                200 G
+              </button>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center">
+              <div>
+                <span class="font-hud font-bold text-sm text-white">Kasaka's Poison Fang</span>
+                <span class="text-xs text-slate-400 block">Dagger: +25 Attack, causes Paralyze</span>
+              </div>
+              <button onclick="buyItem('kasaka_dagger', 1500)" class="px-3 py-1.5 rounded-lg bg-amber-600 text-white font-hud text-xs font-bold hover:bg-amber-500">
+                1,500 G
+              </button>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center">
+              <div>
+                <span class="font-hud font-bold text-sm text-amber-300">Demon King's Longsword</span>
+                <span class="text-xs text-slate-400 block">Weapon: +120 Attack, Storm of White Flames</span>
+              </div>
+              <button onclick="buyItem('demon_sword', 10000)" class="px-3 py-1.5 rounded-lg bg-amber-600 text-white font-hud text-xs font-bold hover:bg-amber-500">
+                10,000 G
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL: ADD CUSTOM REAL-LIFE MISSION
+       ========================================================================= -->
+  <div id="add-mission-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-lg p-6 rounded-2xl system-border bg-slate-950 relative shadow-[0_0_50px_rgba(0,240,255,0.4)]">
+      
+      <div class="flex justify-between items-center pb-3 border-b border-cyan-900/60 mb-4">
+        <h3 class="text-lg font-hud font-bold text-white flex items-center gap-2">
+          <span>📜</span> CREATE REAL-LIFE MISSION
+        </h3>
+        <button onclick="closeAddMissionModal()" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs font-mono text-cyan-300 block mb-1">MISSION TITLE (REAL LIFE ACTION):</label>
+          <input type="text" id="new-mission-title" placeholder="e.g. Read 25 pages of Psychology book, 50 Pull-ups, Drink 3L water" class="w-full p-2.5 rounded-lg bg-slate-900 border border-cyan-800 text-white text-sm focus:outline-none focus:border-cyan-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-mono text-slate-400 block mb-1">PRIMARY STAT REWARD:</label>
+            <select id="new-mission-stat" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+              <option value="int">Intelligence (INT) - Study, Read, Code</option>
+              <option value="str">Strength (STR) - Gym, Calisthenics, Weights</option>
+              <option value="vit">Vitality (VIT) - Hydration, Sleep, Cold Shower</option>
+              <option value="agi">Agility (AGI) - Running, Cardio, Reflexes</option>
+              <option value="sen">Sense (SEN) - Meditation, Deep Focus</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-mono text-slate-400 block mb-1">DIFFICULTY RANK:</label>
+            <select id="new-mission-rank" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-amber-300 text-sm focus:outline-none focus:border-cyan-400">
+              <option value="E">Rank E (Quick Task | +1 Stat, 60 EXP)</option>
+              <option value="D">Rank D (Normal Task | +2 Stats, 150 EXP)</option>
+              <option value="C">Rank C (Medium Effort | +3 Stats, 350 EXP)</option>
+              <option value="B">Rank B (Hard Grind | +5 Stats, 800 EXP)</option>
+              <option value="A">Rank A (Extreme Challenge | +8 Stats, 2,000 EXP)</option>
+              <option value="S">Rank S (Life Milestone | +15 Stats, 5,000 EXP)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-mono text-slate-400 block mb-1">TARGET COUNT (REPS/MINS/UNITS):</label>
+            <input type="number" id="new-mission-target" value="1" min="1" max="1000" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+          </div>
+          <div>
+            <label class="text-xs font-mono text-slate-400 block mb-1">UNIT LABEL:</label>
+            <input type="text" id="new-mission-unit" value="times" placeholder="pages, mins, liters, reps..." class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-mono text-slate-400 block mb-1">CADENCE / TYPE:</label>
+          <select id="new-mission-recurring" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+            <option value="daily">Daily Recurring Habit (Resets every day)</option>
+            <option value="urgent">One-Time Urgent Quest (Completed once, high rewards)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-6 pt-3 border-t border-slate-800">
+        <button onclick="closeAddMissionModal()" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs font-hud hover:bg-slate-700">CANCEL</button>
+        <button onclick="saveNewRealLifeMission()" class="px-6 py-2 rounded-lg bg-cyan-500 text-black text-xs font-hud font-bold hover:bg-cyan-400 shadow-[0_0_12px_#00f0ff]">
+          CREATE MISSION
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       POPUP NOTIFICATION (MANHWA STYLE)
+       ========================================================================= -->
+  <div id="system-popup" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-md p-6 rounded-2xl system-border bg-slate-950 text-center relative shadow-[0_0_50px_rgba(0,240,255,0.6)]">
+      <div class="w-12 h-12 rounded-full bg-cyan-950 border border-cyan-400 flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_#00f0ff]">
+        <span class="text-xl">⚠️</span>
+      </div>
+      <span class="text-xs font-hud font-bold text-cyan-400 tracking-widest block uppercase mb-1" id="popup-category">[NOTIFICATION]</span>
+      <h3 class="text-xl font-hud font-black text-white" id="popup-title">MISSION COMPLETED</h3>
+      <p class="text-sm text-slate-300 my-4" id="popup-desc">You have fulfilled all requirements for today's workout.</p>
+      
+      <div id="popup-rewards" class="p-3 rounded-xl bg-cyan-950/40 border border-cyan-800/60 text-xs text-cyan-300 font-mono mb-4 text-left">
+      </div>
+
+      <button onclick="closePopup()" class="w-full py-2.5 rounded-xl bg-cyan-500 text-black font-hud font-bold text-sm hover:bg-cyan-400 transition shadow-[0_0_15px_#00f0ff]">
+        CONFIRM
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       AUDIO SYNTHESIZER (Web Audio API)
+       ========================================================================= */
+    let audioCtx = null;
+    let audioEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('audio-icon').innerText = audioEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-toggle-btn').innerHTML = audioEnabled 
+        ? '<span id="audio-icon">🔊</span> AUDIO: ON' 
+        : '<span id="audio-icon">🔇</span> AUDIO: OFF';
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.1) {
+      if (!audioEnabled) return;
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    function playSystemChime() {
+      if (!audioEnabled) return;
+      initAudio();
+      playTone(880, 'sine', 0.2, 0.15);
+      setTimeout(() => playTone(1760, 'sine', 0.35, 0.12), 120);
+    }
+
+    function playLevelUpSound() {
+      if (!audioEnabled) return;
+      initAudio();
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playTone(freq, 'triangle', 0.25, 0.2), idx * 80);
+      });
+    }
+
+    function playAriseSound() {
+      if (!audioEnabled) return;
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(95, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(35, audioCtx.currentTime + 1.2);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.2);
+
+        setTimeout(() => playTone(440, 'sine', 0.8, 0.1), 300);
+      } catch(e) {}
+    }
+
+    function playWarningSound() {
+      if (!audioEnabled) return;
+      initAudio();
+      playTone(440, 'square', 0.2, 0.15);
+      setTimeout(() => playTone(440, 'square', 0.2, 0.15), 250);
+    }
+
+    /* =========================================================================
+       WINDOWS NATIVE NOTIFICATION INTEGRATION
+       ========================================================================= */
+    function requestWindowsNotification() {
+      if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            new Notification("THE SYSTEM", {
+              body: "Windows Notification Link Established. Quests will synchronize with your desktop.",
+              icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"
+            });
+            playSystemChime();
+          } else {
+            alert("Notification permission was not granted.");
+          }
+        });
+      } else {
+        alert("Windows web notifications not supported in this container.");
+      }
+    }
+
+    function sendWindowsNotification(title, body) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(title, {
+          body: body,
+          icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"
+        });
+      }
+    }
+
+    /* =========================================================================
+       PERSISTENT STATE & SCHEMA
+       ========================================================================= */
+    const STORAGE_KEY = 'SOLO_LEVELING_SYSTEM_REAL_LIFE_V5';
+
+    const defaultRealLifeMissions = [
+      {
+        id: 'rl_water',
+        title: 'Vessel Cleansing: Drink 3 Liters of Water',
+        stat: 'vit',
+        statReward: 2,
+        rank: 'D',
+        expReward: 150,
+        goldReward: 200,
+        target: 3,
+        current: 0,
+        unit: 'liters',
+        recurring: 'daily',
+        completed: false,
+        streak: 1
+      },
+      {
+        id: 'rl_code',
+        title: 'Code Architecture: Deep Programming Milestone',
+        stat: 'int',
+        statReward: 3,
+        rank: 'C',
+        expReward: 350,
+        goldReward: 500,
+        target: 2,
+        current: 0,
+        unit: 'hours',
+        recurring: 'daily',
+        completed: false,
+        streak: 3
+      },
+      {
+        id: 'rl_read',
+        title: 'Mind Expansion: Read 20 Pages of Non-Fiction',
+        stat: 'int',
+        statReward: 2,
+        rank: 'E',
+        expReward: 100,
+        goldReward: 150,
+        target: 20,
+        current: 0,
+        unit: 'pages',
+        recurring: 'daily',
+        completed: false,
+        streak: 2
+      },
+      {
+        id: 'rl_gym',
+        title: 'Iron Frame Conditioning: Heavy Gym Workout',
+        stat: 'str',
+        statReward: 3,
+        rank: 'C',
+        expReward: 400,
+        goldReward: 600,
+        target: 45,
+        current: 0,
+        unit: 'minutes',
+        recurring: 'daily',
+        completed: false,
+        streak: 0
+      }
+    ];
+
+    const defaultState = {
+      name: "SUNG JIN-WOO",
+      job: "NONE",
+      title: "THE AWAKENED",
+      level: 1,
+      exp: 0,
+      gold: 600,
+      fatigue: 0,
+      clearedQuestsCount: 0,
+      stats: {
+        str: 10,
+        agi: 10,
+        vit: 10,
+        int: 10,
+        sen: 10
+      },
+      unassignedPoints: 3,
+      dailyQuest: {
+        pushups: 0,
+        situps: 0,
+        squats: 0,
+        run: 0.0,
+        completed: false
+      },
+      realLifeMissions: defaultRealLifeMissions,
+      shadows: [],
+      inventory: [
+        { id: 'dagger_basic', name: 'Steel Dagger', type: 'weapon', atk: 10, qty: 1 },
+        { id: 'potion_hp', name: 'High Healing Potion', type: 'consumable', heal: 250, qty: 3 }
+      ]
+    };
+
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState;
+    let currentFilter = 'all';
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    /* =========================================================================
+       MATH FORMULAS
+       ========================================================================= */
+    function getExpRequired(level) {
+      return Math.floor(100 * Math.pow(level, 1.85) + 25 * level);
+    }
+
+    function getMaxHP() {
+      return (state.stats.vit * 25) + (state.stats.str * 5) + (state.level * 50);
+    }
+
+    function getMaxMP() {
+      const base = (state.stats.int * 30) + (state.level * 40);
+      return state.job === "SHADOW MONARCH" ? base + 100000 : base;
+    }
+
+    function getAtkPower() {
+      let wepAtk = 0;
+      state.inventory.forEach(item => {
+        if (item.type === 'weapon' && item.equipped) wepAtk = item.atk;
+      });
+      return Math.floor(state.stats.str * 3.2 + state.stats.agi * 1.1 + wepAtk);
+    }
+
+    function getPerceptionMeters() {
+      return Math.floor(state.stats.sen * 1.5 + 10);
+    }
+
+    function getMaxShadows() {
+      return Math.floor(state.stats.int * 1.5);
+    }
+
+    function getHunterRank() {
+      const totalStats = state.stats.str + state.stats.agi + state.stats.vit + state.stats.int + state.stats.sen;
+      if (totalStats >= 500 || state.level >= 80) return "NATIONAL LEVEL";
+      if (totalStats >= 300 || state.level >= 60) return "RANK S";
+      if (totalStats >= 200 || state.level >= 40) return "RANK A";
+      if (totalStats >= 130 || state.level >= 25) return "RANK B";
+      if (totalStats >= 80 || state.level >= 15) return "RANK C";
+      if (totalStats >= 55 || state.level >= 5) return "RANK D";
+      return "RANK E";
+    }
+
+    /* =========================================================================
+       REAL-LIFE MISSIONS LOGIC
+       ========================================================================= */
+    function renderRealLifeMissions() {
+      const list = document.getElementById('real-life-missions-list');
+      const emptyState = document.getElementById('no-missions-state');
+      list.innerHTML = '';
+
+      const filtered = state.realLifeMissions.filter(m => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'strength') return m.stat === 'str';
+        if (currentFilter === 'intellect') return m.stat === 'int';
+        if (currentFilter === 'vitality') return m.stat === 'vit';
+        if (currentFilter === 'agility') return m.stat === 'agi';
+        if (currentFilter === 'sense') return m.stat === 'sen';
+        return true;
+      });
+
+      // Update badge
+      const activeCount = state.realLifeMissions.filter(m => !m.completed).length;
+      document.getElementById('rl-notif-badge').innerText = activeCount;
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      filtered.forEach((mission) => {
+        const pct = Math.min(100, Math.floor((mission.current / mission.target) * 100));
+        const statLabel = mission.stat.toUpperCase();
+        
+        let statColorClass = 'text-purple-400 border-purple-800 bg-purple-950/40';
+        if (mission.stat === 'str') statColorClass = 'text-rose-400 border-rose-800 bg-rose-950/40';
+        if (mission.stat === 'vit') statColorClass = 'text-emerald-400 border-emerald-800 bg-emerald-950/40';
+        if (mission.stat === 'agi') statColorClass = 'text-amber-400 border-amber-800 bg-amber-950/40';
+        if (mission.stat === 'sen') statColorClass = 'text-cyan-400 border-cyan-800 bg-cyan-950/40';
+
+        const card = document.createElement('div');
+        card.className = `p-5 rounded-2xl system-border bg-slate-950/90 transition flex flex-col justify-between ${mission.completed ? 'opacity-65 border-emerald-700/60' : 'hover:border-cyan-400'}`;
+        
+        card.innerHTML = `
+          <div>
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-hud font-bold border ${statColorClass}">
+                  RANK ${mission.rank} &nbsp;|&nbsp; +${mission.statReward} ${statLabel}
+                </span>
+                <span class="text-xs text-amber-300 font-mono">+${mission.expReward} EXP</span>
+                <span class="text-xs text-amber-400 font-mono">+${mission.goldReward} G</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs font-mono text-cyan-300">🔥 ${mission.streak || 0}-Day Streak</span>
+                <button onclick="deleteRealLifeMission('${mission.id}')" class="text-slate-500 hover:text-rose-400 text-xs">✕</button>
+              </div>
+            </div>
+
+            <h4 class="font-hud font-bold text-base text-white ${mission.completed ? 'line-through text-slate-400' : ''}">
+              ${mission.title}
+            </h4>
+
+            <div class="flex justify-between items-center text-xs font-mono text-slate-400 mt-2 mb-1">
+              <span>Progress: <strong class="text-cyan-300">${mission.current}</strong> / ${mission.target} ${mission.unit}</span>
+              <span>${pct}%</span>
+            </div>
+
+            <div class="w-full h-2 rounded-full bg-slate-900 overflow-hidden mb-3">
+              <div class="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 shadow-[0_0_8px_#00f0ff] transition-all" style="width: ${pct}%;"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-900">
+            <div class="flex gap-1.5">
+              <button onclick="incrementMission('${mission.id}', 1)" ${mission.completed ? 'disabled' : ''} class="px-2.5 py-1 rounded bg-cyan-950 border border-cyan-800 text-cyan-300 text-xs font-mono hover:bg-cyan-900 disabled:opacity-30">
+                +1
+              </button>
+              <button onclick="incrementMission('${mission.id}', 5)" ${mission.completed ? 'disabled' : ''} class="px-2.5 py-1 rounded bg-cyan-950 border border-cyan-800 text-cyan-300 text-xs font-mono hover:bg-cyan-900 disabled:opacity-30">
+                +5
+              </button>
+              <button onclick="completeDirectly('${mission.id}')" ${mission.completed ? 'disabled' : ''} class="px-2.5 py-1 rounded bg-cyan-950 border border-cyan-800 text-cyan-300 text-xs font-mono hover:bg-cyan-900 disabled:opacity-30">
+                MAX
+              </button>
+            </div>
+
+            <button onclick="claimRealLifeMission('${mission.id}')" ${(!mission.completed && mission.current >= mission.target) ? '' : 'disabled'} class="px-5 py-1.5 rounded-xl font-hud font-bold text-xs ${mission.completed ? 'bg-slate-800 text-slate-500' : 'bg-cyan-500 text-black shadow-[0_0_12px_#00f0ff] hover:bg-cyan-400'} disabled:opacity-30 disabled:pointer-events-none transition">
+              ${mission.completed ? 'COMPLETED' : 'CLAIM REWARDS'}
+            </button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function openAddMissionModal() {
+      document.getElementById('add-mission-modal').classList.remove('hidden');
+    }
+
+    function closeAddMissionModal() {
+      document.getElementById('add-mission-modal').classList.add('hidden');
+    }
+
+    function saveNewRealLifeMission() {
+      const title = document.getElementById('new-mission-title').value.trim();
+      if (!title) {
+        alert("Please enter a mission title!");
+        return;
+      }
+
+      const stat = document.getElementById('new-mission-stat').value;
+      const rank = document.getElementById('new-mission-rank').value;
+      const target = parseFloat(document.getElementById('new-mission-target').value) || 1;
+      const unit = document.getElementById('new-mission-unit').value.trim() || 'times';
+      const recurring = document.getElementById('new-mission-recurring').value;
+
+      // Rewards calculation by Rank
+      const rankRewards = {
+        'E': { stat: 1, exp: 60, gold: 100 },
+        'D': { stat: 2, exp: 150, gold: 250 },
+        'C': { stat: 3, exp: 350, gold: 600 },
+        'B': { stat: 5, exp: 800, gold: 1500 },
+        'A': { stat: 8, exp: 2000, gold: 4000 },
+        'S': { stat: 15, exp: 5000, gold: 10000 }
+      };
+
+      const rw = rankRewards[rank];
+
+      const newMission = {
+        id: 'rl_' + Date.now(),
+        title: title,
+        stat: stat,
+        statReward: rw.stat,
+        rank: rank,
+        expReward: rw.exp,
+        goldReward: rw.gold,
+        target: target,
+        current: 0,
+        unit: unit,
+        recurring: recurring,
+        completed: false,
+        streak: 0
+      };
+
+      state.realLifeMissions.unshift(newMission);
+      closeAddMissionModal();
+      document.getElementById('new-mission-title').value = '';
+      playSystemChime();
+      render();
+
+      sendWindowsNotification(
+        "[THE SYSTEM] New Quest Arrived",
+        `Quest Registered: ${title} (${rank}-Rank)`
+      );
+    }
+
+    function addPresetMission(presetKey) {
+      const presets = {
+        water: { title: 'Vessel Cleansing: Drink 3L Water', stat: 'vit', statReward: 2, rank: 'D', expReward: 150, goldReward: 200, target: 3, unit: 'Liters' },
+        coding: { title: 'Code Architect: 2h Focused Programming', stat: 'int', statReward: 3, rank: 'C', expReward: 350, goldReward: 500, target: 2, unit: 'Hours' },
+        reading: { title: 'Mind Expansion: Read 20 Book Pages', stat: 'int', statReward: 2, rank: 'E', expReward: 100, goldReward: 150, target: 20, unit: 'Pages' },
+        workout: { title: 'Iron Body Conditioning: 45m Gym Workout', stat: 'str', statReward: 3, rank: 'C', expReward: 400, goldReward: 600, target: 45, unit: 'Minutes' },
+        meditate: { title: "Monarch's Focus: 15m Meditation", stat: 'sen', statReward: 2, rank: 'E', expReward: 120, goldReward: 150, target: 15, unit: 'Minutes' },
+        cardio: { title: 'Shadow Sprint: 5km Cardio / Jogging', stat: 'agi', statReward: 3, rank: 'C', expReward: 380, goldReward: 550, target: 5, unit: 'km' }
+      };
+
+      const p = presets[presetKey];
+      if (!p) return;
+
+      const newMission = {
+        id: 'rl_' + Date.now(),
+        title: p.title,
+        stat: p.stat,
+        statReward: p.statReward,
+        rank: p.rank,
+        expReward: p.expReward,
+        goldReward: p.goldReward,
+        target: p.target,
+        current: 0,
+        unit: p.unit,
+        recurring: 'daily',
+        completed: false,
+        streak: 0
+      };
+
+      state.realLifeMissions.unshift(newMission);
+      playSystemChime();
+      render();
+
+      sendWindowsNotification("[THE SYSTEM] Mission Registered", p.title);
+    }
+
+    function incrementMission(id, val) {
+      const m = state.realLifeMissions.find(x => x.id === id);
+      if (m && !m.completed) {
+        m.current = Math.min(m.target, m.current + val);
+        playTone(680, 'sine', 0.08, 0.08);
+        renderRealLifeMissions();
+        saveState();
+      }
+    }
+
+    function completeDirectly(id) {
+      const m = state.realLifeMissions.find(x => x.id === id);
+      if (m && !m.completed) {
+        m.current = m.target;
+        playTone(750, 'sine', 0.1, 0.1);
+        renderRealLifeMissions();
+        saveState();
+      }
+    }
+
+    function claimRealLifeMission(id) {
+      const m = state.realLifeMissions.find(x => x.id === id);
+      if (m && !m.completed && m.current >= m.target) {
+        m.completed = true;
+        m.streak = (m.streak || 0) + 1;
+        state.clearedQuestsCount = (state.clearedQuestsCount || 0) + 1;
+
+        // Rewards
+        state.stats[m.stat] += m.statReward;
+        state.gold += m.goldReward;
+        state.fatigue = Math.max(0, state.fatigue - 10);
+
+        playLevelUpSound();
+
+        const statFull = m.stat.toUpperCase();
+        showPopup(
+          "REAL-LIFE MISSION CLEARED",
+          `You have fortified your vessel: "${m.title}" completed.`,
+          [
+            `+${m.statReward} ${statFull} (Attribute directly upgraded!)`,
+            `+${m.expReward} Hunter EXP`,
+            `+${m.goldReward} Dimensional Gold`,
+            `🔥 Current Streak: ${m.streak} Days`
+          ]
+        );
+
+        sendWindowsNotification(
+          "QUEST COMPLETE! ⚡",
+          `[${m.title}] cleared! +${m.statReward} ${statFull} and +${m.expReward} EXP granted to your vessel.`
+        );
+
+        addExp(m.expReward);
+      }
+    }
+
+    function deleteRealLifeMission(id) {
+      state.realLifeMissions = state.realLifeMissions.filter(x => x.id !== id);
+      playTone(400, 'sine', 0.1, 0.08);
+      render();
+    }
+
+    function filterMissions(cat) {
+      currentFilter = cat;
+      ['all', 'strength', 'intellect', 'vitality', 'agility', 'sense'].forEach(c => {
+        const btn = document.getElementById(`filter-${c}`);
+        if (c === cat) {
+          btn.className = "px-3 py-1 rounded-md bg-cyan-950 border border-cyan-500 text-cyan-300";
+        } else {
+          btn.className = "px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-slate-400 hover:text-white";
+        }
+      });
+      renderRealLifeMissions();
+    }
+
+    /* =========================================================================
+       GLOBAL RENDER ENGINE
+       ========================================================================= */
+    function render() {
+      // Header & Badges
+      document.getElementById('player-name').innerText = state.name;
+      document.getElementById('job-title').innerText = "JOB: " + state.job;
+      document.getElementById('player-title').innerText = "TITLE: " + state.title;
+      
+      const rank = getHunterRank();
+      const rankBadge = document.getElementById('hunter-rank-badge');
+      rankBadge.innerText = rank;
+      if (rank === "NATIONAL LEVEL" || rank === "RANK S") {
+        rankBadge.className = "font-hud font-bold text-lg text-purple-400 glow-text-purple tracking-wider";
+      } else {
+        rankBadge.className = "font-hud font-bold text-lg text-amber-400 tracking-wider";
+      }
+
+      // Level & EXP
+      const expReq = getExpRequired(state.level);
+      document.getElementById('display-level').innerText = state.level;
+      document.getElementById('display-exp-text').innerText = `${state.exp} / ${expReq} EXP`;
+      document.getElementById('display-gold').innerText = state.gold.toLocaleString() + " G";
+
+      // Bars
+      const maxHp = getMaxHP();
+      const maxMp = getMaxMP();
+      document.getElementById('hp-text').innerText = `${maxHp} / ${maxHp}`;
+      document.getElementById('mp-text').innerText = `${maxMp} / ${maxMp}`;
+      document.getElementById('fatigue-text').innerText = `${state.fatigue}%`;
+      document.getElementById('fatigue-bar').style.width = `${Math.min(100, state.fatigue)}%`;
+
+      // Core Stats
+      document.getElementById('val-str').innerText = state.stats.str;
+      document.getElementById('val-agi').innerText = state.stats.agi;
+      document.getElementById('val-vit').innerText = state.stats.vit;
+      document.getElementById('val-int').innerText = state.stats.int;
+      document.getElementById('val-sen').innerText = state.stats.sen;
+      document.getElementById('unassigned-points').innerText = state.unassignedPoints;
+
+      const statBtns = document.querySelectorAll('.stat-btn');
+      statBtns.forEach(btn => {
+        btn.disabled = (state.unassignedPoints <= 0);
+      });
+
+      // Derived Combat Numbers
+      document.getElementById('derived-atk').innerText = getAtkPower();
+      document.getElementById('derived-perception').innerText = `${getPerceptionMeters()} m`;
+      document.getElementById('derived-shadow-cap').innerText = `${getMaxShadows()} Soldiers`;
+      document.getElementById('derived-cleared-count').innerText = `${state.clearedQuestsCount || 0} Quests`;
+
+      // Sub-views
+      renderRealLifeMissions();
+      renderQuest();
+      renderShadows();
+      renderInventory();
+
+      saveState();
+    }
+
+    function renderQuest() {
+      const q = state.dailyQuest;
+      document.getElementById('q-pushups').innerText = q.pushups;
+      document.getElementById('q-situps').innerText = q.situps;
+      document.getElementById('q-squats').innerText = q.squats;
+      document.getElementById('q-run').innerText = q.run.toFixed(1);
+
+      document.getElementById('bar-pushups').style.width = `${Math.min(100, q.pushups)}%`;
+      document.getElementById('bar-situps').style.width = `${Math.min(100, q.situps)}%`;
+      document.getElementById('bar-squats').style.width = `${Math.min(100, q.squats)}%`;
+      document.getElementById('bar-run').style.width = `${Math.min(100, (q.run / 10.0) * 100)}%`;
+
+      const isDone = q.pushups >= 100 && q.situps >= 100 && q.squats >= 100 && q.run >= 10.0;
+      const claimBtn = document.getElementById('claim-quest-btn');
+      claimBtn.disabled = !isDone || q.completed;
+      claimBtn.innerText = q.completed ? "COMPLETED TODAY" : "CLAIM REWARDS";
+    }
+
+    function renderShadows() {
+      const cap = getMaxShadows();
+      document.getElementById('shadow-count-header').innerText = `${state.shadows.length} / ${cap}`;
+      
+      const grid = document.getElementById('shadow-army-grid');
+      grid.innerHTML = '';
+
+      if (state.shadows.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-3 text-center py-8 text-slate-500 font-mono text-sm border border-dashed border-slate-800 rounded-xl">
+            No shadows currently summoned. Use the extraction chamber above to command the souls of fallen enemies.
+          </div>
+        `;
+        return;
+      }
+
+      state.shadows.forEach((shadow, idx) => {
+        const card = document.createElement('div');
+        card.className = "p-4 rounded-xl monarch-border bg-slate-900/90 flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] font-hud px-2 py-0.5 rounded bg-purple-950 border border-purple-500 text-purple-300 font-bold">${shadow.rank}</span>
+              <span class="text-xs text-purple-400 font-mono">Lv. ${shadow.level}</span>
+            </div>
+            <h4 class="font-hud font-bold text-white text-base mt-1 glow-text-purple">${shadow.name}</h4>
+            <p class="text-xs text-slate-400 mt-1">${shadow.specialSkill}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-purple-900/60 flex justify-between items-center text-xs">
+            <span class="text-purple-300 font-mono">ATK +${shadow.bonusAtk}</span>
+            <button onclick="dismissShadow(${idx})" class="text-rose-400 hover:text-rose-200 text-xs font-mono">Dismiss</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderInventory() {
+      const grid = document.getElementById('inventory-grid');
+      grid.innerHTML = '';
+
+      if (state.inventory.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 text-center py-6 text-slate-500 font-mono text-xs">Inventory empty.</div>`;
+        return;
+      }
+
+      state.inventory.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = "p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between text-xs">
+              <span class="font-hud font-semibold text-white">${item.name}</span>
+              <span class="text-amber-400 font-mono">x${item.qty}</span>
+            </div>
+            <span class="text-[11px] text-slate-400 block mt-1">
+              ${item.type === 'weapon' ? `ATK: +${item.atk}` : `HEAL: +${item.heal} HP`}
+            </span>
+          </div>
+          <button onclick="useItem(${idx})" class="mt-3 w-full py-1 rounded bg-cyan-950 border border-cyan-700 text-cyan-300 text-xs font-hud hover:bg-cyan-900">
+            ${item.type === 'weapon' ? (item.equipped ? 'EQUIPPED' : 'EQUIP') : 'USE'}
+          </button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       STAT ALLOCATION & EXP SYSTEM
+       ========================================================================= */
+    function allocateStat(statKey) {
+      if (state.unassignedPoints > 0) {
+        state.unassignedPoints -= 1;
+        state.stats[statKey] += 1;
+        playTone(600, 'sine', 0.1, 0.1);
+        render();
+      }
+    }
+
+    function addExp(amount) {
+      state.exp += amount;
+      let expReq = getExpRequired(state.level);
+      
+      while (state.exp >= expReq) {
+        state.exp -= expReq;
+        state.level += 1;
+        state.unassignedPoints += 3;
+        
+        state.stats.str += 1;
+        state.stats.agi += 1;
+        state.stats.vit += 1;
+        state.stats.int += 1;
+        state.stats.sen += 1;
+
+        if (state.level >= 40 && state.job === "NONE") {
+          state.job = "SHADOW MONARCH";
+          state.title = "MONARCH OF SHADOWS";
+          showPopup(
+            "JOB ADVANCEMENT COMPLETE",
+            "You have transcended the mortal threshold. Welcome, Monarch of Shadows.",
+            ["Job: Shadow Monarch", "Passive: Black Heart (+100,000 MP)", "Skill: Monarch's Domain unlocked"]
+          );
+        }
+
+        playLevelUpSound();
+        showPopup(
+          "LEVEL UP!",
+          `Congratulations! You have advanced to Level ${state.level}.`,
+          ["+1 to all stats automatically", "+3 unassigned stat points granted", "HP & MP restored to maximum"]
+        );
+
+        sendWindowsNotification(
+          "[THE SYSTEM] LEVEL UP!",
+          `Congratulations! You have reached Level ${state.level}. Hunter rank evaluation updated.`
+        );
+
+        expReq = getExpRequired(state.level);
+      }
+      render();
+    }
+
+    function giveDebugStatPoints(num) {
+      state.unassignedPoints += num;
+      playSystemChime();
+      render();
+    }
+
+    function resetStats() {
+      const sum = (state.stats.str - 10) + (state.stats.agi - 10) + (state.stats.vit - 10) + (state.stats.int - 10) + (state.stats.sen - 10);
+      state.unassignedPoints += sum;
+      state.stats = { str: 10, agi: 10, vit: 10, int: 10, sen: 10 };
+      playSystemChime();
+      render();
+    }
+
+    function renamePlayer() {
+      const newName = prompt("Enter Hunter Designation / Player Name:", state.name);
+      if (newName && newName.trim()) {
+        state.name = newName.trim();
+        render();
+      }
+    }
+
+    /* =========================================================================
+       CANON QUEST
+       ========================================================================= */
+    function addQuestProgress(type, val) {
+      if (state.dailyQuest.completed) return;
+      state.dailyQuest[type] = Math.min(type === 'run' ? 10.0 : 100, state.dailyQuest[type] + val);
+      state.fatigue = Math.min(100, state.fatigue + (type === 'run' ? 2 : 1));
+      playTone(700, 'sine', 0.08, 0.08);
+      render();
+    }
+
+    function claimDailyQuest() {
+      if (state.dailyQuest.completed) return;
+      state.dailyQuest.completed = true;
+      state.fatigue = 0;
+      state.unassignedPoints += 3;
+      state.gold += 500;
+      
+      playLevelUpSound();
+      showPopup(
+        "DAILY QUEST COMPLETED",
+        "You have completed all workout protocols for today.",
+        [
+          "1. Fatigue reset to 0% (Full cellular restoration)",
+          "2. +3 Unassigned Stat Points",
+          "3. +500 Gold",
+          "4. Blessed Box: Received 2x High Healing Potions"
+        ]
+      );
+
+      state.inventory.push({ id: 'potion_hp', name: 'High Healing Potion', type: 'consumable', heal: 250, qty: 2 });
+      render();
+    }
+
+    function triggerPenaltyZone() {
+      playWarningSound();
+      document.getElementById('penalty-zone-modal').classList.remove('hidden');
+      document.getElementById('quest-container').classList.add('hidden');
+    }
+
+    function survivePenaltyZone() {
+      playTone(880, 'sine', 0.3, 0.2);
+      document.getElementById('penalty-zone-modal').classList.add('hidden');
+      document.getElementById('quest-container').classList.remove('hidden');
+      state.fatigue = 90;
+      addExp(350);
+      showPopup(
+        "PENALTY ZONE SURVIVED",
+        "You endured 4 grueling hours against giant poison centipedes.",
+        ["Survival Experience: +350 EXP", "Fatigue critically elevated to 90%"]
+      );
+    }
+
+    /* =========================================================================
+       SHADOW EXTRACTION ENGINE ("ARISE")
+       ========================================================================= */
+    const corpseDatabase = {
+      igris: { name: "Blood-Red Commander Igris", rank: "COMMANDER", reqMana: 180, baseRating: 50, skill: "Dominator's Touch, Knight Sword Mastery", bonusAtk: 45 },
+      tank: { name: "Tank (Alpha Ice Bear)", rank: "KNIGHT", reqMana: 120, baseRating: 35, skill: "Sub-Zero Roar, Frost Armor", bonusAtk: 28 },
+      iron: { name: "Iron (Kim Chul)", rank: "ELITE KNIGHT", reqMana: 140, baseRating: 40, skill: "Taunting Shield Slam, Indomitable Aegis", bonusAtk: 32 },
+      tusk: { name: "Tusk (High Orc Shaman)", rank: "ELITE KNIGHT", reqMana: 200, baseRating: 48, skill: "Orb of Avarice Fire Pillar, Gravity Magic", bonusAtk: 50 },
+      beru: { name: "Ant King Beru", rank: "MARSHAL", reqMana: 400, baseRating: 75, skill: "Predation, Gluttony, Supersonic Flight", bonusAtk: 120 },
+      bellion: { name: "Bellion", rank: "GRAND MARSHAL", reqMana: 800, baseRating: 95, skill: "Centipede Blade, Army Command Aura", bonusAtk: 250 }
+    };
+
+    let corpseAttempts = {
+      igris: 3, tank: 3, iron: 3, tusk: 3, beru: 3, bellion: 3
+    };
+
+    function updateCorpsePreview() {
+      const key = document.getElementById('target-corpse-select').value;
+      const c = corpseDatabase[key];
+      document.getElementById('corpse-rank').innerText = c.rank;
+      document.getElementById('corpse-mana').innerText = `${c.reqMana} MP`;
+      document.getElementById('corpse-attempts').innerText = `${corpseAttempts[key]} / 3`;
+
+      const attemptsUsed = 3 - corpseAttempts[key];
+      let chance = 0.50 + ((state.stats.int - c.baseRating) / 120) - (attemptsUsed * 0.15);
+      chance = Math.max(0.05, Math.min(0.98, chance));
+      document.getElementById('corpse-chance').innerText = `${Math.floor(chance * 100)}%`;
+    }
+
+    function performExtraction() {
+      const key = document.getElementById('target-corpse-select').value;
+      const c = corpseDatabase[key];
+      const log = document.getElementById('extraction-log');
+
+      if (corpseAttempts[key] <= 0) {
+        log.innerHTML = `<span class="text-rose-400">Target soul has completely dissipated into dust. No attempts remain.</span>`;
+        return;
+      }
+
+      if (state.shadows.length >= getMaxShadows()) {
+        log.innerHTML = `<span class="text-amber-400">Shadow army capacity full (${getMaxShadows()} soldiers). Increase INT to expand cap.</span>`;
+        return;
+      }
+
+      playAriseSound();
+
+      const attemptsUsed = 3 - corpseAttempts[key];
+      let chance = 0.50 + ((state.stats.int - c.baseRating) / 120) - (attemptsUsed * 0.15);
+      chance = Math.max(0.05, Math.min(0.98, chance));
+      const roll = Math.random();
+
+      corpseAttempts[key] -= 1;
+      updateCorpsePreview();
+
+      if (roll <= chance) {
+        const newShadow = {
+          name: c.name,
+          rank: c.rank,
+          level: state.level,
+          specialSkill: c.skill,
+          bonusAtk: c.bonusAtk
+        };
+        state.shadows.push(newShadow);
+        log.innerHTML = `<span class="text-purple-300 font-bold glow-text-purple">"ARISE!" Extraction SUCCESSFUL. [${c.name}] has joined the Monarch's army!</span>`;
+        
+        showPopup(
+          "SHADOW EXTRACTION SUCCESSFUL",
+          `The soul of ${c.name} submitted to your sovereign authority.`,
+          [`Rank: ${c.rank}`, `Special Skill: ${c.skill}`, `Attack Contribution: +${c.bonusAtk}`]
+        );
+      } else {
+        if (corpseAttempts[key] > 0) {
+          log.innerHTML = `<span class="text-rose-400">Extraction Failed: The target spirit fiercely resists. (${corpseAttempts[key]} attempts remaining).</span>`;
+        } else {
+          log.innerHTML = `<span class="text-rose-600 font-bold">Extraction Failed: The target's mana dispersed into nothingness.</span>`;
+        }
+      }
+
+      render();
+    }
+
+    function dismissShadow(idx) {
+      if (confirm(`Dismiss ${state.shadows[idx].name} back to the void?`)) {
+        state.shadows.splice(idx, 1);
+        render();
+      }
+    }
+
+    /* =========================================================================
+       DUNGEON SIMULATOR
+       ========================================================================= */
+    function enterDungeon(rank) {
+      const log = document.getElementById('battle-log');
+      initAudio();
+
+      let expReward = 150;
+      let goldReward = 200;
+      let enemy = "Goblin Chieftain";
+
+      if (rank === 'b') {
+        expReward = 1200;
+        goldReward = 1800;
+        enemy = "Ice Elf Commander Baruka";
+      } else if (rank === 's') {
+        expReward = 8000;
+        goldReward = 25000;
+        enemy = "Demon King Baran";
+      }
+
+      log.innerHTML += `<p class="text-cyan-400">> Entering ${rank.toUpperCase()}-Rank Gate. Engaging ${enemy}...</p>`;
+      playTone(550, 'square', 0.1, 0.1);
+
+      setTimeout(() => {
+        const shadowPower = state.shadows.reduce((acc, s) => acc + s.bonusAtk, 0);
+        const playerAtk = getAtkPower();
+        const totalStrike = playerAtk + shadowPower;
+
+        log.innerHTML += `<p class="text-purple-300">> Shadow Soldiers deploy into battle! Total Strike: ${totalStrike} damage.</p>`;
+        
+        setTimeout(() => {
+          log.innerHTML += `<p class="text-emerald-400 font-bold">> TARGET ELIMINATED! Boss defeated. Gained +${expReward} EXP & +${goldReward} Gold.</p>`;
+          state.gold += goldReward;
+          state.fatigue = Math.min(100, state.fatigue + 15);
+          addExp(expReward);
+          log.scrollTop = log.scrollHeight;
+        }, 600);
+
+      }, 500);
+    }
+
+    /* =========================================================================
+       SHOP & INVENTORY
+       ========================================================================= */
+    function buyItem(itemId, cost) {
+      if (state.gold < cost) {
+        alert("Insufficient Dimensional Gold!");
+        return;
+      }
+      state.gold -= cost;
+
+      if (itemId === 'potion_hp') {
+        state.inventory.push({ id: 'potion_hp', name: 'High Healing Potion', type: 'consumable', heal: 250, qty: 1 });
+      } else if (itemId === 'potion_mp') {
+        state.inventory.push({ id: 'potion_mp', name: 'Mana Elixir', type: 'consumable', heal: 300, qty: 1 });
+      } else if (itemId === 'kasaka_dagger') {
+        state.inventory.push({ id: 'kasaka_dagger', name: "Kasaka's Poison Fang", type: 'weapon', atk: 25, qty: 1 });
+      } else if (itemId === 'demon_sword') {
+        state.inventory.push({ id: 'demon_sword', name: "Demon King's Longsword", type: 'weapon', atk: 120, qty: 1 });
+      }
+
+      playSystemChime();
+      render();
+    }
+
+    function useItem(idx) {
+      const item = state.inventory[idx];
+      if (item.type === 'weapon') {
+        item.equipped = !item.equipped;
+        playTone(900, 'sine', 0.1, 0.1);
+      } else if (item.type === 'consumable') {
+        state.fatigue = Math.max(0, state.fatigue - 30);
+        playTone(1100, 'sine', 0.2, 0.15);
+        state.inventory.splice(idx, 1);
+      }
+      render();
+    }
+
+    /* =========================================================================
+       TAB & POPUP LOGIC
+       ========================================================================= */
+    function switchTab(tabId) {
+      ['real-life', 'status', 'quest', 'shadows', 'dungeons', 'inventory'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).className = "tab-btn px-5 py-2.5 rounded-lg font-hud text-sm font-semibold tracking-wider transition bg-slate-900/60 text-slate-400 border border-slate-700 hover:text-cyan-300";
+      });
+
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      const activeTabBtn = document.getElementById(`tab-${tabId}`);
+      activeTabBtn.className = "tab-btn px-5 py-2.5 rounded-lg font-hud text-sm font-semibold tracking-wider transition bg-cyan-500/20 text-cyan-300 border border-cyan-400 shadow-[0_0_10px_rgba(0,240,255,0.4)]";
+      playTone(800, 'sine', 0.05, 0.05);
+
+      if (tabId === 'shadows') {
+        updateCorpsePreview();
+      }
+    }
+
+    function showPopup(title, desc, rewards = []) {
+      document.getElementById('popup-title').innerText = title;
+      document.getElementById('popup-desc').innerText = desc;
+      
+      const rBox = document.getElementById('popup-rewards');
+      if (rewards.length > 0) {
+        rBox.innerHTML = rewards.map(r => `<div>• ${r}</div>`).join('');
+        rBox.classList.remove('hidden');
+      } else {
+        rBox.classList.add('hidden');
+      }
+
+      document.getElementById('system-popup').classList.remove('hidden');
+    }
+
+    function closePopup() {
+      document.getElementById('system-popup').classList.add('hidden');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      render();
+      updateCorpsePreview();
+    });
+  </script>
+</body>
+</html>
